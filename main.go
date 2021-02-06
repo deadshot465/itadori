@@ -56,17 +56,22 @@ func messageCreate(client *discordgo.Session, msg *discordgo.MessageCreate) {
 		}
 
 		author := discordgo.MessageEmbedAuthor{
-			Name:    "Sumi",
-			IconURL: "https://cdn.discordapp.com/avatars/806706183637041192/e53034dfdfc40f778330ac55830f6da6.webp?size=1024",
+			Name:    "Itadori Yuuji from Jujutsu Kaisen",
+			IconURL: "https://cdn.discordapp.com/avatars/741107999720079471/b8830ee0ca3eed411165a99189204803.webp?size=1024",
+		}
+		
+		footer := discordgo.MessageEmbedFooter{
+			Text: "Itadori Bot: Release 0.1 | 2021-02-07",
 		}
 
 		embed := discordgo.MessageEmbed{
 			Type:        discordgo.EmbedTypeRich,
-			Description: "Sumi in the Church of Minamoto Kou.",
-			Color:       0x88D1F1,
+			Description: "Itadori Yuuji in the Church of Minamoto Kou.\nItadori was inspired by the anime/manga Jujutsu Kaisen (a.k.a. Sorcery Fight).\nItadori version 0.1 was made and developed by:\n **Tetsuki Syu#1250, Kirito#9286**",
+			Color:       0xD6A09A,
 			Thumbnail:   &thumbnail,
 			Author:      &author,
 			Fields:      nil,
+			Footer:      &footer,
 		}
 
 		client.ChannelMessageSendEmbed(msg.ChannelID, &embed)
