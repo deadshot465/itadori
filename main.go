@@ -4,9 +4,16 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
+	"time"
+)
+
+var (
+	presences = []string { "Demon Hunting", "Cursed Energy", "Divergent Fist", "Black Flash", "Slaughter Demon", "Manga", "Game" }
 )
 
 func main() {
@@ -23,6 +30,7 @@ func main() {
 		return
 	}
 
+	client.AddHandler(ready)
 	client.AddHandler(messageCreate)
 	client.Identify.Intents = discordgo.IntentsGuildMessages
 
@@ -37,7 +45,21 @@ func main() {
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
 
-	client.Close()
+	_ = client.Close()
+}
+
+func ready(client *discordgo.Session, _ *discordgo.Ready) {
+	rand.Seed(time.Now().Unix())
+	presence := presences[rand.Intn(len(presences))]
+	_ = client.UpdateGameStatus(0, presence)
+	go func() {
+		for {
+			time.Sleep(1 * time.Hour)
+			rand.Seed(time.Now().Unix())
+			presence = presences[rand.Intn(len(presences))]
+			_ = client.UpdateGameStatus(0, presence)
+		}
+	}()
 }
 
 func messageCreate(client *discordgo.Session, msg *discordgo.MessageCreate) {
@@ -47,7 +69,11 @@ func messageCreate(client *discordgo.Session, msg *discordgo.MessageCreate) {
 	prefix := os.Getenv("PREFIX")
 
 	if msg.Content == prefix + "ping" {
-		client.ChannelMessageSend(msg.ChannelID, "Pong!")
+		startTime := time.Now()
+		pingMsg, _ := client.ChannelMessageSend(msg.ChannelID, "🏓 Pinging...")
+		diff := time.Since(startTime)
+		heartBeatLatency := client.HeartbeatLatency().Milliseconds()
+		_, _ = client.ChannelMessageEdit(msg.ChannelID, pingMsg.ID, "🏓 Pong!\nLatency is: " + strconv.FormatInt(diff.Milliseconds(), 10) + "ms. Heartbeat latency is: " + strconv.FormatInt(heartBeatLatency, 10) + "ms.")
 	}
 	
 	if msg.Content == prefix + "about" {
@@ -74,6 +100,6 @@ func messageCreate(client *discordgo.Session, msg *discordgo.MessageCreate) {
 			Footer:      &footer,
 		}
 
-		client.ChannelMessageSendEmbed(msg.ChannelID, &embed)
+		_, _ = client.ChannelMessageSendEmbed(msg.ChannelID, &embed)
 	}
 }
