@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	presences = []string { "Demon Hunting", "Cursed Energy", "Divergent Fist", "Black Flash", "Slaughter Demon", "Manga", "Game" }
+	presences = []string { "Demon Hunting", "Cursed Energy", "Divergent Fist", "Black Flash", "Slaughter Demon", "Manga", "Game", "Practising Jujutsu" }
 )
 
 func main() {
